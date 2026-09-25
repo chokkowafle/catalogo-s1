@@ -4,14 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.solucionador.ui.theme.SolucionadorTheme
+
+// Modelo del producto con su categoría asociada
+data class Producto(
+    val nombre: String,
+    val categoria: String
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,25 +54,39 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CatalogoScreen(modifier: Modifier = Modifier) {
     var textoBusqueda by remember { mutableStateOf("") }
+    var categoriaSeleccionada by remember { mutableStateOf("Todas") }
 
-    // Lista de productos del catálogo
+    // Lista de categorías para el carrusel
+    val categorias = remember {
+        listOf("Zona Gamer", "Zona Otaku", "Zona Musical", "Zona Kawaii", "Todas")
+    }
+
+    // Inventario de productos clasificados
     val productos = remember {
         listOf(
-            "Camiseta de algodón",
-            "Pantalón de mezclilla",
-            "Zapatillas deportivas",
-            "Polerón con capucha",
-            "Gorra clásica",
-            "Chaqueta cortaviento",
-            "Calcetines térmicos",
-            "Mochila impermeable",
-            "dih"
+            Producto("Camiseta de algodón", "Zona Gamer"),
+            Producto("Pantalón de mezclilla", "Zona Gamer"),
+            Producto("Polerón con capucha", "Zona Gamer"),
+            Producto("Chaqueta cortaviento", "Zona Gamer"),
+            Producto("Calcetines térmicos", "Zona Otaku"),
+            Producto("Zapatillas deportivas", "Zona Otaku"),
+            Producto("Zapatos casuales", "Zona Otaku"),
+            Producto("Botas de montaña", "Zona Otaku"),
+            Producto("Gorra clásica", "Zona Musical"),
+            Producto("Mochila impermeable", "Zona Musical"),
+            Producto("Billetera de cuero", "Zona Musical"),
+            Producto("dih", "Zona Kawaii"),
+            Producto("dihx2", "Zona Kawaii"),
+            Producto("dihx3", "Zona Kawaii"),
+            Producto("dihx4", "Zona Kawaii")
         )
     }
 
-    // Filtro dinámico según el texto ingresado
+    // Filtro conjunto: coincidencia por texto y por categoría activa
     val productosFiltrados = productos.filter { item ->
-        item.contains(textoBusqueda.trim(), ignoreCase = true)
+        val coincideCategoria = (categoriaSeleccionada == "Todas" || item.categoria == categoriaSeleccionada)
+        val coincideTexto = item.nombre.contains(textoBusqueda.trim(), ignoreCase = true)
+        coincideCategoria && coincideTexto
     }
 
     Column(
@@ -71,6 +94,7 @@ fun CatalogoScreen(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        // 1. Barra de búsqueda superior
         OutlinedTextField(
             value = textoBusqueda,
             onValueChange = { nuevoTexto ->
@@ -81,12 +105,51 @@ fun CatalogoScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         )
 
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // 2. Carrusel horizontal de cuadros de texto clickeables (Categorías)
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items(categorias) { categoria ->
+                val estaSeleccionada = (categoria == categoriaSeleccionada)
+
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (estaSeleccionada) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.surfaceVariant
+                        }
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = if (estaSeleccionada) 4.dp else 1.dp
+                    ),
+                    modifier = Modifier.clickable {
+                        categoriaSeleccionada = categoria
+                    }
+                ) {
+                    Text(
+                        text = categoria,
+                        color = if (estaSeleccionada) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                    )
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Vista de resultados o mensaje de no encontrado
+        // 3. Listado dinámico de productos resultantes
         if (productosFiltrados.isEmpty()) {
             Text(
-                text = "No se encontraron resultados para '$textoBusqueda'",
+                text = "No se encontraron resultados en '$categoriaSeleccionada' para '$textoBusqueda'",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 16.dp)
@@ -101,11 +164,22 @@ fun CatalogoScreen(modifier: Modifier = Modifier) {
                         modifier = Modifier.fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
-                        Text(
-                            text = producto,
-                            modifier = Modifier.padding(16.dp),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = producto.nombre,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                text = producto.categoria,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+                        }
                     }
                 }
             }
