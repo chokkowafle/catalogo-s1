@@ -3,8 +3,10 @@ package com.example.solucionador
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -15,14 +17,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -37,33 +40,45 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Modelos de datos
-data class Producto(val id: Int, val precio: String)
-data class Categoria(val nombre: String)
+// 1. Se añade 'imagenRes' a los modelos de datos
+data class Producto(val id: Int, val nombre: String, val precio: String, val categoria: String, val imagenRes: Int)
+data class Categoria(val nombre: String, val imagenRes: Int)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogoScreen() {
     val colorAmarillo = Color(0xFFFFDF6C)
-    val colorFondo = Color(0xFFF0F0F0)
+    val colorFondo = Color(0xFFE5E5E5)
 
-    // Forma sencilla de agregar productos: mutableStateListOf permite
-    // agregar elementos a la lista con productos.add(...) y la UI se actualizará automáticamente.
+    var searchText by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf<String?>(null) }
+
+    // 2. Se asignan las imágenes de la carpeta drawable (reemplaza R.drawable.ic_launcher_foreground por tus imágenes reales)
     val productos = remember {
         mutableStateListOf(
-            Producto(1, "$1111"),
-            Producto(2, "$1111"),
-            Producto(3, "$1111"),
-            Producto(4, "$1111"),
-            Producto(5, "$1111"),
-            Producto(6, "$1111")
+            Producto(1, "Lata Coca-Cola", "$1111", "Bebidas", R.drawable.chopper),
+            Producto(2, "Jugo de Naranja", "$1111", "Bebidas", R.drawable.ic_launcher_foreground),
+            Producto(3, "Guitarra Strat", "$1111", "Guitarras", R.drawable.ic_launcher_foreground),
+            Producto(4, "Guitarra Acústica", "$1111", "Guitarras", R.drawable.ic_launcher_foreground),
+            Producto(5, "Peluche Chopper", "$1111", "Chopper", R.drawable.ic_launcher_foreground),
+            Producto(6, "Polera Vintage", "$1111", "Ropa", R.drawable.ic_launcher_foreground),
+            Producto(7, "Chaqueta Negra", "$1111", "Ropa", R.drawable.ic_launcher_foreground)
         )
     }
 
     val categorias = listOf(
-        Categoria("Bebidas"),
-        Categoria("Guitarras"),
-        Categoria("Chopper")
+        Categoria("Zona Gamer", R.drawable.ic_launcher_foreground),
+        Categoria("Zona Kawai", R.drawable.ic_launcher_foreground),
+        Categoria("Zona Musical", R.drawable.ic_launcher_foreground),
+        Categoria("Zona Otaku", R.drawable.ic_launcher_foreground),
+        Categoria("Zona Setup", R.drawable.ic_launcher_foreground)
     )
+
+    val productosFiltrados = productos.filter { producto ->
+        val coincideCategoria = selectedCategory == null || producto.categoria == selectedCategory
+        val coincideBusqueda = searchText.isBlank() || producto.nombre.contains(searchText, ignoreCase = true)
+        coincideCategoria && coincideBusqueda
+    }
 
     Scaffold(
         bottomBar = {
@@ -73,7 +88,6 @@ fun CatalogoScreen() {
                     .height(80.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
-                // Fondo de la barra inferior
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -82,12 +96,15 @@ fun CatalogoScreen() {
                         .border(1.dp, Color.Black)
                         .align(Alignment.BottomCenter)
                 )
-                // Botón central
                 Box(
                     modifier = Modifier
                         .size(60.dp)
                         .background(colorAmarillo, CircleShape)
-                        .border(1.dp, Color.Black, CircleShape),
+                        .border(1.dp, Color.Black, CircleShape)
+                        .clickable {
+                            searchText = ""
+                            selectedCategory = null
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -106,40 +123,48 @@ fun CatalogoScreen() {
                 .background(colorFondo)
                 .padding(paddingValues)
         ) {
-            // Contenedor superior (Buscador y Categorías)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(colorAmarillo)
                     .border(1.dp, Color.Black)
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = 12.dp)
             ) {
-                // Barra de búsqueda
-                Row(
+                OutlinedTextField(
+                    value = searchText,
+                    onValueChange = { searchText = it },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar", tint = Color.Black) },
+                    placeholder = { Text("Buscar....", color = Color.Black, fontWeight = FontWeight.Bold) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
-                        .background(Color.White)
-                        .border(1.dp, Color.Black)
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(Icons.Default.Search, contentDescription = "Buscar")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Buscar....", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                }
+                        .padding(16.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        focusedIndicatorColor = Color.Black,
+                        unfocusedIndicatorColor = Color.Black,
+                        cursorColor = Color.Black
+                    ),
+                    singleLine = true,
+                    shape = RoundedCornerShape(0.dp)
+                )
 
-                // Fila de categorías
                 LazyRow(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(categorias) { categoria ->
+                        val isSelected = selectedCategory == categoria.nombre
                         Row(
                             modifier = Modifier
                                 .border(1.dp, Color.Black)
-                                .background(colorAmarillo)
-                                .padding(4.dp),
+                                .background(if (isSelected) Color.White else colorAmarillo)
+                                .padding(horizontal = 8.dp, vertical = 6.dp)
+                                .clickable {
+                                    selectedCategory = if (isSelected) null else categoria.nombre
+                                },
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(
@@ -149,17 +174,25 @@ fun CatalogoScreen() {
                                     .border(1.dp, Color.Black, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                // Placeholder de imagen de categoría
-                                Icon(Icons.Default.Image, contentDescription = null, modifier = Modifier.size(16.dp))
+                                // 3. Imagen de categoría
+                                Image(
+                                    painter = painterResource(id = categoria.imagenRes),
+                                    contentDescription = categoria.nombre,
+                                    modifier = Modifier.size(16.dp)
+                                )
                             }
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(categoria.nombre, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = categoria.nombre,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = Color.Black
+                            )
                         }
                     }
                 }
             }
 
-            // Grilla de Productos
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.fillMaxSize(),
@@ -167,36 +200,49 @@ fun CatalogoScreen() {
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(productos) { producto ->
+                items(productosFiltrados) { producto ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(0.85f)
+                            .aspectRatio(0.80f)
                             .border(1.dp, Color.Black),
                         colors = CardDefaults.cardColors(containerColor = Color.White),
-                        shape = RoundedCornerShape(0.dp) // Cuadrado, como en v.png
+                        shape = RoundedCornerShape(0.dp)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            // Placeholder de foto del producto
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
                                     .fillMaxWidth()
-                                    .padding(8.dp)
-                                    .background(Color.LightGray),
+                                    .padding(12.dp)
+                                    .border(1.dp, Color.Black)
+                                    .background(Color.White),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Default.Image, contentDescription = "Imagen", modifier = Modifier.size(48.dp))
+                                // 4. Imagen del producto
+                                Image(
+                                    painter = painterResource(id = producto.imagenRes),
+                                    contentDescription = "Imagen de ${producto.nombre}",
+                                    modifier = Modifier.fillMaxSize()
+                                )
                             }
-                            // Texto de Precio
+                            Text(
+                                text = producto.nombre,
+                                fontSize = 14.sp,
+                                color = Color.DarkGray,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(horizontal = 4.dp),
+                                maxLines = 1
+                            )
                             Text(
                                 text = producto.precio,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp,
-                                modifier = Modifier.padding(bottom = 12.dp)
+                                color = Color.Black,
+                                modifier = Modifier.padding(bottom = 12.dp, top = 2.dp)
                             )
                         }
                     }
