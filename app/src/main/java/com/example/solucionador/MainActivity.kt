@@ -66,7 +66,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// 1. Se añade 'imagenRes' a los modelos de datos
 data class Producto(val id: Int, val nombre: String, val precio: String, val categoria: String, val imagenRes: Int)
 data class Categoria(val nombre: String, val imagenRes: Int)
 
@@ -79,7 +78,7 @@ fun CatalogoScreen() {
     var searchText by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<String?>(null) }
 
-    // 2. Se asignan las imágenes de la carpeta drawable (reemplaza R.drawable.ic_launcher_foreground por tus imágenes reales)
+
     val productos = remember {
         mutableStateListOf(
             Producto(8, "Disco Shadow of Colossus", "$34990", "Zona Gamer", R.drawable.goc),
@@ -121,7 +120,7 @@ fun CatalogoScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .navigationBarsPadding() // Adapta la altura según los gestos o botones de navegación de cada dispositivo
+                    .navigationBarsPadding()
                     .height(80.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
@@ -211,7 +210,7 @@ fun CatalogoScreen() {
                                     .border(1.dp, Color.Black, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                // 3. Imagen de categoría
+
                                 Image(
                                     painter = painterResource(id = categoria.imagenRes),
                                     contentDescription = categoria.nombre,
@@ -259,7 +258,7 @@ fun CatalogoScreen() {
                                     .background(Color.White),
                                 contentAlignment = Alignment.Center
                             ) {
-                                // 4. Imagen del producto
+
                                 Image(
                                     painter = painterResource(id = producto.imagenRes),
                                     contentDescription = "Imagen de ${producto.nombre}",
