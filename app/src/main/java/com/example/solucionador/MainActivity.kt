@@ -3,181 +3,200 @@ package com.example.solucionador
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.solucionador.ui.theme.SolucionadorTheme
-
-// Modelo del producto con su categoría asociada
-data class Producto(
-    val nombre: String,
-    val categoria: String
-)
+import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            SolucionadorTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    CatalogoScreen(modifier = Modifier.padding(innerPadding))
-                }
+            MaterialTheme {
+                CatalogoScreen()
             }
         }
     }
 }
 
+// Modelos de datos
+data class Producto(val id: Int, val precio: String)
+data class Categoria(val nombre: String)
+
 @Composable
-fun CatalogoScreen(modifier: Modifier = Modifier) {
-    var textoBusqueda by remember { mutableStateOf("") }
-    var categoriaSeleccionada by remember { mutableStateOf("Todas") }
+fun CatalogoScreen() {
+    val colorAmarillo = Color(0xFFFFDF6C)
+    val colorFondo = Color(0xFFF0F0F0)
 
-    // Lista de categorías para el carrusel
-    val categorias = remember {
-        listOf("Zona Gamer", "Zona Otaku", "Zona Musical", "Zona Kawaii", "Todas")
-    }
-
-    // Inventario de productos clasificados
+    // Forma sencilla de agregar productos: mutableStateListOf permite
+    // agregar elementos a la lista con productos.add(...) y la UI se actualizará automáticamente.
     val productos = remember {
-        listOf(
-            Producto("Camiseta de algodón", "Zona Gamer"),
-            Producto("Pantalón de mezclilla", "Zona Gamer"),
-            Producto("Polerón con capucha", "Zona Gamer"),
-            Producto("Chaqueta cortaviento", "Zona Gamer"),
-            Producto("Calcetines térmicos", "Zona Otaku"),
-            Producto("Zapatillas deportivas", "Zona Otaku"),
-            Producto("Zapatos casuales", "Zona Otaku"),
-            Producto("Botas de montaña", "Zona Otaku"),
-            Producto("Gorra clásica", "Zona Musical"),
-            Producto("Mochila impermeable", "Zona Musical"),
-            Producto("Billetera de cuero", "Zona Musical"),
-            Producto("dih", "Zona Kawaii"),
-            Producto("dihx2", "Zona Kawaii"),
-            Producto("dihx3", "Zona Kawaii"),
-            Producto("dihx4", "Zona Kawaii")
+        mutableStateListOf(
+            Producto(1, "$1111"),
+            Producto(2, "$1111"),
+            Producto(3, "$1111"),
+            Producto(4, "$1111"),
+            Producto(5, "$1111"),
+            Producto(6, "$1111")
         )
     }
 
-    // Filtro conjunto: coincidencia por texto y por categoría activa
-    val productosFiltrados = productos.filter { item ->
-        val coincideCategoria = (categoriaSeleccionada == "Todas" || item.categoria == categoriaSeleccionada)
-        val coincideTexto = item.nombre.contains(textoBusqueda.trim(), ignoreCase = true)
-        coincideCategoria && coincideTexto
-    }
+    val categorias = listOf(
+        Categoria("Bebidas"),
+        Categoria("Guitarras"),
+        Categoria("Chopper")
+    )
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // 1. Barra de búsqueda superior
-        OutlinedTextField(
-            value = textoBusqueda,
-            onValueChange = { nuevoTexto ->
-                textoBusqueda = nuevoTexto
-            },
-            placeholder = { Text("Buscar en el catálogo...") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // 2. Carrusel horizontal de cuadros de texto clickeables (Categorías)
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(categorias) { categoria ->
-                val estaSeleccionada = (categoria == categoriaSeleccionada)
-
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (estaSeleccionada) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.surfaceVariant
-                        }
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = if (estaSeleccionada) 4.dp else 1.dp
-                    ),
-                    modifier = Modifier.clickable {
-                        categoriaSeleccionada = categoria
-                    }
+    Scaffold(
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                // Fondo de la barra inferior
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .background(colorAmarillo)
+                        .border(1.dp, Color.Black)
+                        .align(Alignment.BottomCenter)
+                )
+                // Botón central
+                Box(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .background(colorAmarillo, CircleShape)
+                        .border(1.dp, Color.Black, CircleShape),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = categoria,
-                        color = if (estaSeleccionada) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Inicio",
+                        modifier = Modifier.size(32.dp),
+                        tint = Color.Black
                     )
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // 3. Listado dinámico de productos resultantes
-        if (productosFiltrados.isEmpty()) {
-            Text(
-                text = "No se encontraron resultados en '$categoriaSeleccionada' para '$textoBusqueda'",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxSize()
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colorFondo)
+                .padding(paddingValues)
+        ) {
+            // Contenedor superior (Buscador y Categorías)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(colorAmarillo)
+                    .border(1.dp, Color.Black)
+                    .padding(bottom = 8.dp)
             ) {
-                items(productosFiltrados) { producto ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                    ) {
+                // Barra de búsqueda
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .background(Color.White)
+                        .border(1.dp, Color.Black)
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(Icons.Default.Search, contentDescription = "Buscar")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Buscar....", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
+
+                // Fila de categorías
+                LazyRow(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(categorias) { categoria ->
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                .border(1.dp, Color.Black)
+                                .background(colorAmarillo)
+                                .padding(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .background(Color.White, CircleShape)
+                                    .border(1.dp, Color.Black, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                // Placeholder de imagen de categoría
+                                Icon(Icons.Default.Image, contentDescription = null, modifier = Modifier.size(16.dp))
+                            }
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(categoria.nombre, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        }
+                    }
+                }
+            }
+
+            // Grilla de Productos
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(productos) { producto ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(0.85f)
+                            .border(1.dp, Color.Black),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        shape = RoundedCornerShape(0.dp) // Cuadrado, como en v.png
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            // Placeholder de foto del producto
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                                    .background(Color.LightGray),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(Icons.Default.Image, contentDescription = "Imagen", modifier = Modifier.size(48.dp))
+                            }
+                            // Texto de Precio
                             Text(
-                                text = producto.nombre,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Text(
-                                text = producto.categoria,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.secondary
+                                text = producto.precio,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                modifier = Modifier.padding(bottom = 12.dp)
                             )
                         }
                     }
