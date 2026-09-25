@@ -82,22 +82,22 @@ fun CatalogoScreen() {
     // 2. Se asignan las imágenes de la carpeta drawable (reemplaza R.drawable.ic_launcher_foreground por tus imágenes reales)
     val productos = remember {
         mutableStateListOf(
+            Producto(8, "Disco Shadow of Colossus", "$34990", "Zona Gamer", R.drawable.goc),
+            Producto(9, "PSVita", "$149990", "Zona Gamer", R.drawable.psvita),
+            Producto(10, "LOZ Switch Edition", "$54990", "Zona Gamer", R.drawable.loz),
             Producto(1, "Peluche Chopper", "$6769", "Zona Kawai", R.drawable.chopper),
+            Producto(7, "Peluche Valheim", "$24990", "Zona Kawai", R.drawable.valheim),
             Producto(2, "Ericcson 2", "$13990", "Zona Musical", R.drawable.ericcson2),
-            Producto(3, "Silla Ergonomica", "$59790", "Zona Setup", R.drawable.sillaergo),
             Producto(4, "Toca Discos", "$69670", "Zona Musical", R.drawable.tocadiscos),
-            Producto(5, "Shampoo", "$5990", "Zona Random", R.drawable.shampoo),
             Producto(6, "Disco Simplemente", "$11990", "Zona Musical", R.drawable.simplemente),
-            Producto(7, "Peluche Valheim", "$199490", "Zona Kawai", R.drawable.valheim),
-            Producto(8, "Disco Shadow of Colossus", "$199490", "Zona Gamer", R.drawable.goc),
-            Producto(9, "PSVita", "$199490", "Zona Gamer", R.drawable.psvita),
-            Producto(10, "LOZ Switch Edition", "$199490", "Zona Gamer", R.drawable.loz),
-            Producto(11, "Poleron JJK", "$199490", "Zona Otaku", R.drawable.camisaanime),
-            Producto(12, "Audifonos Minecraft", "$199490", "Zona Setup", R.drawable.cascosmc),
-            Producto(13, "Pack Mangas Demon Slayer", "$199490", "Zona Otaku", R.drawable.mangasdsl),
-            Producto(14, "Posa Audifonos Minecraft", "$199490", "Zona Setup", R.drawable.pedestalespada),
-            Producto(15, "Combo Red Dragon", "$199490", "Zona Setup", R.drawable.comboredragon),
-            Producto(16, "Posters JJK", "$199490", "Zona Otaku", R.drawable.posterjjk)
+            Producto(11, "Poleron JJK", "$29990", "Zona Otaku", R.drawable.camisaanime),
+            Producto(13, "Pack Mangas Demon Slayer", "$39990", "Zona Otaku", R.drawable.mangasdsl),
+            Producto(16, "Posters JJK", "$8990", "Zona Otaku", R.drawable.posterjjk),
+            Producto(5, "Shampoo", "$5990", "Zona Random", R.drawable.shampoo),
+            Producto(3, "Silla Ergonomica", "$59790", "Zona Setup", R.drawable.sillaergo),
+            Producto(12, "Audifonos Minecraft", "$45990", "Zona Setup", R.drawable.cascosmc),
+            Producto(14, "Posa Audifonos Minecraft", "$15990", "Zona Setup", R.drawable.pedestalespada),
+            Producto(15, "Combo Red Dragon", "$79990", "Zona Setup", R.drawable.comboredragon)
         )
     }
 
