@@ -7,7 +7,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,8 +31,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,22 +82,32 @@ fun CatalogoScreen() {
     // 2. Se asignan las imágenes de la carpeta drawable (reemplaza R.drawable.ic_launcher_foreground por tus imágenes reales)
     val productos = remember {
         mutableStateListOf(
-            Producto(1, "Lata Coca-Cola", "$1111", "Bebidas", R.drawable.chopper),
-            Producto(2, "Jugo de Naranja", "$1111", "Bebidas", R.drawable.ic_launcher_foreground),
-            Producto(3, "Guitarra Strat", "$1111", "Guitarras", R.drawable.ic_launcher_foreground),
-            Producto(4, "Guitarra Acústica", "$1111", "Guitarras", R.drawable.ic_launcher_foreground),
-            Producto(5, "Peluche Chopper", "$1111", "Chopper", R.drawable.ic_launcher_foreground),
-            Producto(6, "Polera Vintage", "$1111", "Ropa", R.drawable.ic_launcher_foreground),
-            Producto(7, "Chaqueta Negra", "$1111", "Ropa", R.drawable.ic_launcher_foreground)
+            Producto(1, "Peluche Chopper", "$6769", "Zona Kawai", R.drawable.chopper),
+            Producto(2, "Ericcson 2", "$13990", "Zona Musical", R.drawable.ericcson2),
+            Producto(3, "Silla Ergonomica", "$59790", "Zona Setup", R.drawable.sillaergo),
+            Producto(4, "Toca Discos", "$69670", "Zona Musical", R.drawable.tocadiscos),
+            Producto(5, "Shampoo", "$5990", "Zona Random", R.drawable.shampoo),
+            Producto(6, "Disco Simplemente", "$11990", "Zona Musical", R.drawable.simplemente),
+            Producto(7, "Peluche Valheim", "$199490", "Zona Kawai", R.drawable.valheim),
+            Producto(8, "Disco Shadow of Colossus", "$199490", "Zona Gamer", R.drawable.goc),
+            Producto(9, "PSVita", "$199490", "Zona Gamer", R.drawable.psvita),
+            Producto(10, "LOZ Switch Edition", "$199490", "Zona Gamer", R.drawable.loz),
+            Producto(11, "Poleron JJK", "$199490", "Zona Otaku", R.drawable.camisaanime),
+            Producto(12, "Audifonos Minecraft", "$199490", "Zona Setup", R.drawable.cascosmc),
+            Producto(13, "Pack Mangas Demon Slayer", "$199490", "Zona Otaku", R.drawable.mangasdsl),
+            Producto(14, "Posa Audifonos Minecraft", "$199490", "Zona Setup", R.drawable.pedestalespada),
+            Producto(15, "Combo Red Dragon", "$199490", "Zona Setup", R.drawable.comboredragon),
+            Producto(16, "Posters JJK", "$199490", "Zona Otaku", R.drawable.posterjjk)
         )
     }
 
     val categorias = listOf(
-        Categoria("Zona Gamer", R.drawable.ic_launcher_foreground),
-        Categoria("Zona Kawai", R.drawable.ic_launcher_foreground),
-        Categoria("Zona Musical", R.drawable.ic_launcher_foreground),
-        Categoria("Zona Otaku", R.drawable.ic_launcher_foreground),
-        Categoria("Zona Setup", R.drawable.ic_launcher_foreground)
+        Categoria("Zona Gamer", R.drawable.gamer),
+        Categoria("Zona Kawai", R.drawable.kawaii),
+        Categoria("Zona Musical", R.drawable.musica),
+        Categoria("Zona Otaku", R.drawable.otaku),
+        Categoria("Zona Setup", R.drawable.setup),
+        Categoria(nombre = "Zona Random", imagenRes = R.drawable.random)
     )
 
     val productosFiltrados = productos.filter { producto ->
@@ -85,6 +121,7 @@ fun CatalogoScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .navigationBarsPadding() // Adapta la altura según los gestos o botones de navegación de cada dispositivo
                     .height(80.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
