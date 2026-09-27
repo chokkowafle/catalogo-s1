@@ -1,6 +1,7 @@
 package com.example.solucionador
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -77,7 +78,6 @@ fun CatalogoScreen() {
     var searchText by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<String?>(null) }
 
-
     val productos = remember {
         mutableStateListOf(
             Producto(1, "Peluche Chopper", "$6769", "Zona Kawai", R.drawable.chopper),
@@ -137,6 +137,7 @@ fun CatalogoScreen() {
                         .background(colorAmarillo, CircleShape)
                         .border(1.dp, Color.Black, CircleShape)
                         .clickable {
+                            Log.d("MI_CATALOGO", "Boton Inicio presionado: Reseteando filtros")
                             searchText = ""
                             selectedCategory = null
                         },
@@ -167,7 +168,10 @@ fun CatalogoScreen() {
             ) {
                 OutlinedTextField(
                     value = searchText,
-                    onValueChange = { searchText = it },
+                    onValueChange = { newText ->
+                        searchText = newText
+                        Log.d("MI_CATALOGO", "Texto de busqueda cambiado a: '$newText'")
+                    },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar", tint = Color.Black) },
                     placeholder = { Text("Buscar....", color = Color.Black, fontWeight = FontWeight.Bold) },
                     modifier = Modifier
@@ -202,20 +206,17 @@ fun CatalogoScreen() {
                                 )
                                 .clickable {
                                     selectedCategory = if (isSelected) null else categoria.nombre
+                                    Log.d("MI_CATALOGO", "Categoria presionada: ${categoria.nombre} (Seleccionada: ${selectedCategory != null})")
                                 }
                                 .padding(8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-
                             Image(
                                 painter = painterResource(id = categoria.imagenRes),
                                 contentDescription = categoria.nombre,
                                 modifier = Modifier.size(60.dp)
                             )
                             Spacer(modifier = Modifier.height(6.dp))
-
-
-                            Spacer(modifier = Modifier.width(6.dp))
 
                             Text(
                                 text = categoria.nombre,
@@ -241,7 +242,10 @@ fun CatalogoScreen() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(0.80f)
-                            .border(1.dp, Color.Black),
+                            .border(1.dp, Color.Black)
+                            .clickable {
+                                Log.d("MI_CATALOGO", "Producto seleccionado: ${producto.nombre} - Precio: ${producto.precio}")
+                            },
                         colors = CardDefaults.cardColors(containerColor = Color.White),
                         shape = RoundedCornerShape(0.dp)
                     ) {
@@ -258,7 +262,6 @@ fun CatalogoScreen() {
                                     .background(Color.White),
                                 contentAlignment = Alignment.Center
                             ) {
-
                                 Image(
                                     painter = painterResource(id = producto.imagenRes),
                                     contentDescription = "Imagen de ${producto.nombre}",
