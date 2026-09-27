@@ -214,20 +214,7 @@ fun CatalogoScreen() {
                             )
                             Spacer(modifier = Modifier.height(6.dp))
 
-                            Box(
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .background(Color.White, CircleShape)
-                                    .border(1.dp, Color.Black, CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
 
-                                Image(
-                                    painter = painterResource(id = categoria.imagenRes),
-                                    contentDescription = categoria.nombre,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                            }
                             Spacer(modifier = Modifier.width(6.dp))
 
                             Text(
