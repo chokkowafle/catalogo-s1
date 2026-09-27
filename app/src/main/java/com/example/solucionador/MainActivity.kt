@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -66,7 +65,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// 1. Se añade 'imagenRes' a los modelos de datos
 data class Producto(val id: Int, val nombre: String, val precio: String, val categoria: String, val imagenRes: Int)
 data class Categoria(val nombre: String, val imagenRes: Int)
 
@@ -79,7 +77,7 @@ fun CatalogoScreen() {
     var searchText by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<String?>(null) }
 
-    // 2. Se asignan las imágenes de la carpeta drawable (reemplaza R.drawable.ic_launcher_foreground por tus imágenes reales)
+
     val productos = remember {
         mutableStateListOf(
             Producto(8, "Disco Shadow of Colossus", "$34990", "Zona Gamer", R.drawable.goc),
@@ -102,11 +100,11 @@ fun CatalogoScreen() {
     }
 
     val categorias = listOf(
-        Categoria("Zona Gamer", R.drawable.gamer),
-        Categoria("Zona Kawai", R.drawable.kawaii),
+        Categoria("Zona Gamer", R.drawable.control),
+        Categoria("Zona Kawai", R.drawable.kawaiii),
         Categoria("Zona Musical", R.drawable.musica),
         Categoria("Zona Otaku", R.drawable.otaku),
-        Categoria("Zona Setup", R.drawable.setup),
+        Categoria("Zona Setup", R.drawable.gamerr),
         Categoria(nombre = "Zona Random", imagenRes = R.drawable.random)
     )
 
@@ -121,7 +119,7 @@ fun CatalogoScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .navigationBarsPadding() // Adapta la altura según los gestos o botones de navegación de cada dispositivo
+                    .navigationBarsPadding()
                     .height(80.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
@@ -189,21 +187,33 @@ fun CatalogoScreen() {
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(horizontal = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(categorias) { categoria ->
                         val isSelected = selectedCategory == categoria.nombre
-                        Row(
+                        Column(
                             modifier = Modifier
-                                .border(1.dp, Color.Black)
-                                .background(if (isSelected) Color.White else colorAmarillo)
-                                .padding(horizontal = 8.dp, vertical = 6.dp)
+                                .width(100.dp)
+                                .border(1.dp, Color.Black, shape = RoundedCornerShape(12.dp))
+                                .background(
+                                    if (isSelected) Color.White else colorAmarillo,
+                                    shape = RoundedCornerShape(12.dp)
+                                )
                                 .clickable {
                                     selectedCategory = if (isSelected) null else categoria.nombre
-                                },
-                            verticalAlignment = Alignment.CenterVertically
+                                }
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+
+                            Image(
+                                painter = painterResource(id = categoria.imagenRes),
+                                contentDescription = categoria.nombre,
+                                modifier = Modifier.size(60.dp)
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+
                             Box(
                                 modifier = Modifier
                                     .size(24.dp)
@@ -211,7 +221,7 @@ fun CatalogoScreen() {
                                     .border(1.dp, Color.Black, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                // 3. Imagen de categoría
+
                                 Image(
                                     painter = painterResource(id = categoria.imagenRes),
                                     contentDescription = categoria.nombre,
@@ -219,11 +229,13 @@ fun CatalogoScreen() {
                                 )
                             }
                             Spacer(modifier = Modifier.width(6.dp))
+
                             Text(
                                 text = categoria.nombre,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp,
-                                color = Color.Black
+                                color = Color.Black,
+                                textAlign = TextAlign.Center
                             )
                         }
                     }
@@ -259,7 +271,7 @@ fun CatalogoScreen() {
                                     .background(Color.White),
                                 contentAlignment = Alignment.Center
                             ) {
-                                // 4. Imagen del producto
+
                                 Image(
                                     painter = painterResource(id = producto.imagenRes),
                                     contentDescription = "Imagen de ${producto.nombre}",
