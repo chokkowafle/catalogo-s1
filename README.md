@@ -8,10 +8,10 @@ Aplicación móvil nativa para Android desarrollada en **Kotlin** y **Jetpack Co
 
 ## Características
 
-- **Interfaz Declarativa:** Diseñada completamente con Jetpack Compose y Material 3.
-- **Catálogo Visual:** Galería de productos variados (ropa, periféricos, figuras, videojuegos y accesorios) con carga eficiente de recursos gráficos.
-- **Tematización Dinámica:** Paleta de colores, tipografías y soporte de temas definidos en `ui.theme`.
-- **Estructura Modular y Moderna:** Configuración basada en Gradle Kotlin DSL (`build.gradle.kts`) y catálogo de dependencias (`libs.versions.toml`).
+- Interfaz Declarativa: Diseñada completamente con Jetpack Compose y Material 3.
+- Catálogo Visual: Galería de productos variados (ropa, periféricos, figuras, videojuegos y accesorios) con carga eficiente de recursos gráficos.
+- Tematización Dinámica: Paleta de colores, tipografías y soporte de temas definidos en `ui.theme`.
+- Estructura Modular y Moderna: Configuración basada en Gradle Kotlin DSL (`build.gradle.kts`) y catálogo de dependencias (`libs.versions.toml`).
 
 ---
 
@@ -88,4 +88,4 @@ cd catalogo-s1-master
 * **Arquitectura:** Componentes de arquitectura recomendados para Android Jetpack
 
 ```
-
+La aplicación está diseñada para ser compilada y ejecutada tanto en emuladores (AVD configurado para Pixel 8, API 37.2, arquitectura x86_64) como en dispositivos físicos (probado en hardware Samsung SM-A176B mediante depuración USB).
